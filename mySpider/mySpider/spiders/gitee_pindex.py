@@ -7,7 +7,7 @@ class GiteePindexSpider(scrapy.Spider):
 
     name = "gitee-pindex"
     allowed_domains = "https://gitee.com"
-    start_urls = ["https://gitee.com/explore/all?lang=cpp"]
+    start_urls = ["https://gitee.com/explore/all?lang=c"]
 
     def parse(self, response):
         elements = response.xpath('//div[@class="ui relaxed divided items explore-repo__list"]//div[@class="item"]')
