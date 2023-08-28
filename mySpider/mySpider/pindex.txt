@@ -126,7 +126,6 @@ https://gitee.com/Joker2770/SDL2snake
 https://gitee.com/openeuler/anbox
 https://gitee.com/physer/starquant
 https://gitee.com/xungen/cppweb
-https://gitee.com/ClickHouse/ClickHouse
 https://gitee.com/itas109/CommLite
 https://gitee.com/openharmony/arkui_ace_engine_lite
 https://gitee.com/jadedrip/simpleLang
