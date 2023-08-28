@@ -10,14 +10,13 @@ import time
 from config import GiteeDownLoad
 from git.repo import Repo
 
+
 class GiteePinfoSpider(scrapy.Spider):
     name = "gitee-pinfo"
     allowed_domains = "https://gitee.com"
     start_urls = [line.strip() for line in open('./pindex_c.txt', 'r')]
-    # start_urls = ["https://gitee.com/LingmoOS/OpenLingmo"]
 
     def parse(self, response):
-        print(response.url)
         _extra = {}
         langs = []
         elements = response.xpath('//div[@class="ui popup summary-languages-popup"]//div[@class="row"]')
@@ -82,19 +81,6 @@ class GiteePinfoSpider(scrapy.Spider):
             yield scrapy.Request("https://gitee.com" + next_href__get, cb_kwargs=kwargs, callback=self.parse_tags, dont_filter=True)
         else:
             if tag_list is not None and tag_list.xpath('./div[@class="item tag-item"]') is not None and len(tag_list.xpath('./div[@class="item tag-item"]')) > 0:
-                # element = tag_list.xpath('./div[@class="item tag-item"]')[-1]
-                # _tag = element.xpath('./div[@class="tag-item-action tag-name"]/a/@title').get().strip()
-                # download_path = os.path.join(GiteeDownLoad.download_path,
-                #                              kwargs['name'].replace(':', "\\") + '\\' + _tag + '\\' +
-                #                              kwargs['name'].split(':')[-1] + '-' + _tag)
-                # print(download_path)
-                # time_start = time.time()
-                # Repo.clone_from(response.url[0:-5] + '.git', to_path=download_path, b=_tag, depth=1)
-                # time_end = time.time()  # 结束计时
-                # time_c = time_end - time_start  # 运行所花时间
-                # print('time cost', time_c, 's')
-                # shutil.rmtree(download_path + '\\.git', onerror=file_remove_readonly)
-                # print('删除git文件', time.time() - time_end, 's')
                 for element in tag_list.xpath('./div[@class="item tag-item"]'):
                     release = {}
                     _tag = element.xpath('./div[@class="tag-item-action tag-name"]/a/@title').get().strip()
