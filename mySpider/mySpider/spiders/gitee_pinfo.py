@@ -1,14 +1,9 @@
-import time
-
 import scrapy
-
-from mySpider.items import GiteePInfo, GiteePIndex
 import os
-import shutil
 import stat
 import time
-from config import GiteeDownLoad
-from git.repo import Repo
+
+from mySpider.items import GiteePInfo
 
 
 class GiteePinfoSpider(scrapy.Spider):
