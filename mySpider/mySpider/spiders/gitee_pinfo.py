@@ -14,7 +14,7 @@ from git.repo import Repo
 class GiteePinfoSpider(scrapy.Spider):
     name = "gitee-pinfo"
     allowed_domains = "https://gitee.com"
-    start_urls = [line.strip() for line in open('./pindex_c.txt', 'r')]
+    start_urls = [line.strip() for line in open('./pindex_c.txt', 'r')][40:55]
 
     def parse(self, response):
         _extra = {}
@@ -66,35 +66,23 @@ class GiteePinfoSpider(scrapy.Spider):
             '//div[@class="ui tiny pagination menu"]//a[@class="icon item" and @rel="next"]/@href'
         ).get()
         tag_list = response.xpath('//div[@class="tag-list"]')
+        if tag_list is not None and tag_list.xpath('./div[@class="item tag-item"]') is not None and len(
+                tag_list.xpath('./div[@class="item tag-item"]')) > 0:
+            for element in tag_list.xpath('./div[@class="item tag-item"]'):
+                release = {}
+                _tag = element.xpath('./div[@class="tag-item-action tag-name"]/a/@title').get().strip()
+                release_date = element.xpath('./div[@class="tag-item-action tag-last-commit"]/div[2]/text()').get().strip().split(' ')[0]
+                release['_tag'] = _tag
+                release['release_date'] = release_date
+                release['version'] = _tag
+                release['_warn'] = 'BadVersion'
+                release['source_url'] = kwargs['_source'] + '/repository/archive/' + _tag
+                kwargs['releases'].append(release)
         if next_href__get is not None:
-            if tag_list is not None and tag_list.xpath('./div[@class="item tag-item"]') is not None and len(tag_list.xpath('./div[@class="item tag-item"]')) > 0:
-                for element in tag_list.xpath('./div[@class="item tag-item"]'):
-                    release = {}
-                    _tag = element.xpath('./div[@class="tag-item-action tag-name"]/a/@title').get().strip()
-                    release_date = element.xpath('./div[@class="tag-item-action tag-last-commit"]/div[2]/text()').get().strip().split(' ')[0]
-                    release['_tag'] = _tag
-                    release['release_date'] = release_date
-                    release['version'] = _tag
-                    release['_warn'] = 'BadVersion'
-                    release['source_url'] = response.url[0:-5] + '/repository/archive/' + _tag
-                    kwargs['releases'].append(release)
             yield scrapy.Request("https://gitee.com" + next_href__get, cb_kwargs=kwargs, callback=self.parse_tags, dont_filter=True)
         else:
-            if tag_list is not None and tag_list.xpath('./div[@class="item tag-item"]') is not None and len(tag_list.xpath('./div[@class="item tag-item"]')) > 0:
-                for element in tag_list.xpath('./div[@class="item tag-item"]'):
-                    release = {}
-                    _tag = element.xpath('./div[@class="tag-item-action tag-name"]/a/@title').get().strip()
-                    release_date = element.xpath('./div[@class="tag-item-action tag-last-commit"]/div[2]/text()').get().strip().split(' ')[0]
-                    release['_tag'] = _tag
-                    release['release_date'] = release_date
-                    release['version'] = _tag
-                    release['_warn'] = 'BadVersion'
-                    release['source_url'] = response.url[0:-5] + '/repository/archive/' + _tag
-                    kwargs['releases'].append(release)
-                print(len(kwargs['releases']))
             yield kwargs
 
 def file_remove_readonly(func, path, execinfo):
     os.chmod(path, stat.S_IWUSR)  # 修改文件权限
     func(path)
-
